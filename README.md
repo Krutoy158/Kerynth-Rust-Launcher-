@@ -6,7 +6,7 @@ A Rust-only mobile launcher project for Minecraft: Java Edition. KRL is focused 
 
 KRL is at the foundation stage. The repository currently contains a Rust workspace, profile validation, version-manifest parsing and channel filtering, safe JAR import and inspection, runtime-plan validation, frame-time metrics, and an Android native entry point.
 
-A complete launcher interface, Microsoft sign-in, verified downloads, runtime packaging, mod-loader installation, and a real game launch are not implemented yet.
+The Rust core now includes offline player identity creation from a username, including Minecraft-compatible offline UUID generation. The Android sign-in screen and actual offline game launch are not implemented yet. Microsoft sign-in, verified downloads, runtime packaging, mod-loader installation, and a real game launch also remain incomplete.
 
 ## Platform scope
 
@@ -24,7 +24,7 @@ The Android NativeActivity route has limited integration with the system soft ke
 
 ## Workspace
 
-- `krl-core`: shared profile and loader models.
+- `krl-core`: shared profile and loader models plus local offline-player identity.
 - `krl-versions`: official version-manifest parsing and channel filtering.
 - `krl-mods`: JAR import, archive inspection, duplicate detection, listing, and removal.
 - `krl-runtime`: runtime compatibility checks and launch-plan validation.
@@ -40,6 +40,10 @@ cargo clippy --workspace --all-targets -- -D warnings
 ```
 
 GitHub Actions runs Rust checks and an Android ARM64 compile check. A successful native-library compile is not the same as a complete installable APK or a successful Minecraft launch.
+
+## Account modes
+
+KRL is planned to support both Microsoft sign-in and a local Offline Account mode. Offline mode asks only for a username and creates a deterministic offline UUID locally; it does not contact Microsoft or claim that the player owns or has authenticated a Minecraft account. Offline identities are for local/offline play and servers configured to accept offline identities. Servers requiring official account authentication will reject them. The current Rust core contains the identity model only; the Android UI and end-to-end game launch are still pending.
 
 ## Performance policy
 
