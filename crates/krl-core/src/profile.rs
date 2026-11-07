@@ -51,9 +51,10 @@ impl GameProfile {
 
         if self.game_version.is_empty()
             || self.game_version.len() > 64
-            || !self.game_version.bytes().all(|byte| {
-                byte.is_ascii_alphanumeric() || b"._-+".contains(&byte)
-            })
+            || !self
+                .game_version
+                .bytes()
+                .all(|byte| byte.is_ascii_alphanumeric() || b"._-+".contains(&byte))
         {
             return Err(ProfileError::InvalidGameVersion);
         }

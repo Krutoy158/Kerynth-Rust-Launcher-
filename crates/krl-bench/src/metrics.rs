@@ -40,8 +40,7 @@ impl FrameMetrics {
         let average_frame_ms = sorted.iter().sum::<f64>() / sorted.len() as f64;
         let slow_count = (sorted.len() as f64 * 0.01).ceil() as usize;
         let slow_start = sorted.len().saturating_sub(slow_count);
-        let slow_average_ms =
-            sorted[slow_start..].iter().sum::<f64>() / slow_count as f64;
+        let slow_average_ms = sorted[slow_start..].iter().sum::<f64>() / slow_count as f64;
 
         Ok(Self {
             samples: sorted.len(),
@@ -68,10 +67,8 @@ mod tests {
 
     #[test]
     fn calculates_average_and_low_fps() {
-        let metrics = FrameMetrics::from_frame_times_ms(&[
-            10.0, 10.0, 10.0, 20.0, 100.0,
-        ])
-        .expect("samples should be valid");
+        let metrics = FrameMetrics::from_frame_times_ms(&[10.0, 10.0, 10.0, 20.0, 100.0])
+            .expect("samples should be valid");
 
         assert!((metrics.average_fps - 33.333333).abs() < 0.001);
         assert!((metrics.one_percent_low_fps - 10.0).abs() < 0.001);

@@ -117,14 +117,13 @@ pub fn list_mods(mods_directory: impl AsRef<Path>) -> Result<Vec<ModInfo>, ModEr
     Ok(mods)
 }
 
-pub fn remove_mod(
-    mods_directory: impl AsRef<Path>,
-    file_name: &str,
-) -> Result<(), ModError> {
+pub fn remove_mod(mods_directory: impl AsRef<Path>, file_name: &str) -> Result<(), ModError> {
     if file_name.is_empty()
         || file_name.contains('/')
         || file_name.contains('\\')
-        || Path::new(file_name).file_name().and_then(|value| value.to_str())
+        || Path::new(file_name)
+            .file_name()
+            .and_then(|value| value.to_str())
             != Some(file_name)
     {
         return Err(ModError::UnsafePath);
@@ -160,9 +159,7 @@ fn write_and_hash<R: Read>(
             break;
         }
 
-        total = total
-            .checked_add(read as u64)
-            .ok_or(ModError::TooLarge)?;
+        total = total.checked_add(read as u64).ok_or(ModError::TooLarge)?;
         if total > MAX_MOD_BYTES {
             return Err(ModError::TooLarge);
         }
@@ -222,10 +219,7 @@ fn inspect_archive(path: &Path) -> Result<Vec<String>, ModError> {
     Ok(hints)
 }
 
-fn find_duplicate(
-    directory: &Path,
-    digest: &str,
-) -> Result<Option<ModInfo>, ModError> {
+fn find_duplicate(directory: &Path, digest: &str) -> Result<Option<ModInfo>, ModError> {
     for entry in fs::read_dir(directory)? {
         let entry = entry?;
         if !entry.file_type()?.is_file() {
@@ -302,8 +296,8 @@ mod tests {
     use std::io::{Cursor, Write};
     use std::path::PathBuf;
     use std::time::{SystemTime, UNIX_EPOCH};
-    use zip::write::SimpleFileOptions;
     use zip::ZipWriter;
+    use zip::write::SimpleFileOptions;
 
     fn temporary_directory() -> PathBuf {
         let nonce = SystemTime::now()
@@ -327,7 +321,10 @@ mod tests {
 
     #[test]
     fn sanitizes_source_names() {
-        assert_eq!(sanitized_stem("../Cool Mod.jar").expect("valid name"), "Cool_Mod");
+        assert_eq!(
+            sanitized_stem("../Cool Mod.jar").expect("valid name"),
+            "Cool_Mod"
+        );
         assert!(matches!(sanitized_stem("file.zip"), Err(ModError::NotJar)));
     }
 

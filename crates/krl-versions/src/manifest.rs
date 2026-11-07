@@ -150,7 +150,10 @@ mod tests {
     #[test]
     fn parses_and_filters_channels() {
         let manifest = parse_manifest(FIXTURE).expect("fixture should parse");
-        assert_eq!(manifest.latest_release().map(|entry| entry.id.as_str()), Some("1.21.11"));
+        assert_eq!(
+            manifest.latest_release().map(|entry| entry.id.as_str()),
+            Some("1.21.11")
+        );
         assert_eq!(manifest.filtered(VersionChannel::Releases).count(), 1);
         assert_eq!(manifest.filtered(VersionChannel::Snapshots).count(), 1);
         assert_eq!(manifest.filtered(VersionChannel::Legacy).count(), 1);
@@ -159,10 +162,7 @@ mod tests {
 
     #[test]
     fn rejects_duplicate_ids() {
-        let duplicate = FIXTURE.replace(
-            r#""id": "25w01a""#,
-            r#""id": "1.21.11""#,
-        );
+        let duplicate = FIXTURE.replace(r#""id": "25w01a""#, r#""id": "1.21.11""#);
         assert!(parse_manifest(&duplicate).is_err());
     }
 
