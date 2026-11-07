@@ -88,8 +88,7 @@ impl StorageLayout {
                     return Self::open(root);
                 }
 
-                let mut entries =
-                    fs::read_dir(&root).map_err(|source| io_error(&root, source))?;
+                let mut entries = fs::read_dir(&root).map_err(|source| io_error(&root, source))?;
                 if entries.next().is_some() {
                     return Err(StorageError::UnrecognizedDirectory(root));
                 }
@@ -100,8 +99,7 @@ impl StorageLayout {
             Err(source) => return Err(io_error(&root, source)),
         }
 
-        let canonical_root =
-            fs::canonicalize(&root).map_err(|source| io_error(&root, source))?;
+        let canonical_root = fs::canonicalize(&root).map_err(|source| io_error(&root, source))?;
         let layout = Self {
             root: canonical_root,
         };
@@ -124,8 +122,7 @@ impl StorageLayout {
             return Err(StorageError::InvalidMetadata);
         }
 
-        let bytes =
-            fs::read(&manifest_path).map_err(|source| io_error(&manifest_path, source))?;
+        let bytes = fs::read(&manifest_path).map_err(|source| io_error(&manifest_path, source))?;
         let manifest: StorageManifest = serde_json::from_slice(&bytes)?;
 
         if manifest.application != APPLICATION_NAME {
@@ -146,9 +143,7 @@ impl StorageLayout {
         Ok(layout)
     }
 
-    pub fn find_existing(
-        parent_directory: impl AsRef<Path>,
-    ) -> Result<Option<Self>, StorageError> {
+    pub fn find_existing(parent_directory: impl AsRef<Path>) -> Result<Option<Self>, StorageError> {
         let root = parent_directory.as_ref().join(DATA_DIRECTORY_NAME);
 
         if !root.exists() {
@@ -210,17 +205,11 @@ impl StorageLayout {
         Ok(self.instances_directory().join(instance_id))
     }
 
-    pub fn instance_mods_directory(
-        &self,
-        instance_id: &str,
-    ) -> Result<PathBuf, StorageError> {
+    pub fn instance_mods_directory(&self, instance_id: &str) -> Result<PathBuf, StorageError> {
         Ok(self.instance_directory(instance_id)?.join("mods"))
     }
 
-    pub fn instance_saves_directory(
-        &self,
-        instance_id: &str,
-    ) -> Result<PathBuf, StorageError> {
+    pub fn instance_saves_directory(&self, instance_id: &str) -> Result<PathBuf, StorageError> {
         Ok(self.instance_directory(instance_id)?.join("saves"))
     }
 
@@ -261,10 +250,9 @@ impl StorageLayout {
             .duration_since(UNIX_EPOCH)
             .unwrap_or_default()
             .as_nanos();
-        let temporary_path = self.root.join(format!(
-            ".krl-storage-{}-{nonce}.tmp",
-            std::process::id()
-        ));
+        let temporary_path = self
+            .root
+            .join(format!(".krl-storage-{}-{nonce}.tmp", std::process::id()));
         let manifest_path = self.root.join(STORAGE_MANIFEST_FILE);
 
         let mut file = OpenOptions::new()
@@ -273,9 +261,7 @@ impl StorageLayout {
             .open(&temporary_path)
             .map_err(|source| io_error(&temporary_path, source))?;
 
-        let write_result = file
-            .write_all(&contents)
-            .and_then(|()| file.sync_all());
+        let write_result = file.write_all(&contents).and_then(|()| file.sync_all());
         drop(file);
 
         if let Err(source) = write_result {
@@ -339,10 +325,8 @@ mod tests {
             .duration_since(UNIX_EPOCH)
             .expect("system clock should be valid")
             .as_nanos();
-        let path = std::env::temp_dir().join(format!(
-            "krl-storage-test-{}-{nonce}",
-            std::process::id()
-        ));
+        let path =
+            std::env::temp_dir().join(format!("krl-storage-test-{}-{nonce}", std::process::id()));
         fs::create_dir_all(&path).expect("test directory should be created");
         path
     }
@@ -405,8 +389,7 @@ mod tests {
         let parent = temporary_directory();
         StorageLayout::initialize(&parent).expect("storage should initialize");
 
-        let existing =
-            StorageLayout::find_existing(&parent).expect("storage scan should succeed");
+        let existing = StorageLayout::find_existing(&parent).expect("storage scan should succeed");
         assert!(existing.is_some());
 
         fs::remove_dir_all(parent).expect("test directory should be removed");
