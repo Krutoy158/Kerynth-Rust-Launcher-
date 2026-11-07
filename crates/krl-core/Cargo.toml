@@ -6,5 +6,6 @@ license.workspace = true
 rust-version.workspace = true
 
 [dependencies]
+md-5.workspace = true
 serde.workspace = true
 thiserror.workspace = true
