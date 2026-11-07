@@ -6,7 +6,7 @@ A Rust-only mobile launcher project for Minecraft: Java Edition. KRL is focused 
 
 KRL is at the foundation stage. The repository currently contains a Rust workspace, profile validation, version-manifest parsing and channel filtering, safe JAR import and inspection, runtime-plan validation, frame-time metrics, and an Android native entry point.
 
-The Rust core now includes offline player identity creation from a username, including Minecraft-compatible offline UUID generation. The Android sign-in screen and actual offline game launch are not implemented yet. Microsoft sign-in, verified downloads, runtime packaging, mod-loader installation, and a real game launch also remain incomplete.
+The Rust core includes profile validation, version-manifest parsing, mod management, runtime-plan validation, and performance metrics. Microsoft sign-in, secure local session persistence, offline launch after prior authentication, verified downloads, runtime packaging, mod-loader installation, and a real game launch are not implemented yet.
 
 ## Platform scope
 
@@ -24,7 +24,7 @@ The Android NativeActivity route has limited integration with the system soft ke
 
 ## Workspace
 
-- `krl-core`: shared profile and loader models plus local offline-player identity.
+- `krl-core`: shared profile and loader models.
 - `krl-versions`: official version-manifest parsing and channel filtering.
 - `krl-mods`: JAR import, archive inspection, duplicate detection, listing, and removal.
 - `krl-runtime`: runtime compatibility checks and launch-plan validation.
@@ -43,7 +43,7 @@ GitHub Actions runs Rust checks and an Android ARM64 compile check. A successful
 
 ## Account modes
 
-KRL is planned to support both Microsoft sign-in and a local Offline Account mode. Offline mode asks only for a username and creates a deterministic offline UUID locally; it does not contact Microsoft or claim that the player owns or has authenticated a Minecraft account. Offline identities are for local/offline play and servers configured to accept offline identities. Servers requiring official account authentication will reject them. The current Rust core contains the identity model only; the Android UI and end-to-end game launch are still pending.
+KRL is planned to support Microsoft sign-in and offline play after a successful account sign-in. The launcher should securely preserve the authorized local session and allow previously installed game versions to start without a network connection when the session and required files remain valid. Offline play must never fabricate an authenticated identity or bypass account ownership checks. The Android UI, secure session persistence, and end-to-end offline launch are not implemented yet.
 
 ## Performance policy
 
