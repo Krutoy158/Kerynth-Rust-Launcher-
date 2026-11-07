@@ -8,7 +8,9 @@ All application and launcher source code must be Rust. Android uses the built-in
 
 Minecraft: Java Edition still needs a compatible virtual machine to execute the game bytecode. KRL may integrate with a separately packaged runtime from Rust, but that does not permit Java/Kotlin launcher source code.
 
-## Milestones
+## Original implementation queue
+
+Work through these milestones in order. An unfinished earlier milestone always has priority over later milestones and newly requested features.
 
 ### M0 — Repository foundation
 
@@ -28,12 +30,7 @@ Minecraft: Java Edition still needs a compatible virtual machine to execute the 
 - [x] Android NativeActivity event loop and eframe window integration.
 - [ ] Touch and text-entry behavior verified on physical Android devices.
 - [ ] Microsoft account sign-in and secure session storage.
-- [ ] Offline launch option for previously authenticated accounts with locally available game files.
 - [ ] Application lifecycle and persistent settings.
-- [ ] Android Storage Access Framework folder picker and Rust document-provider adapter.
-- [ ] Create the shared KRL folder in a user-selected Documents directory.
-- [ ] Re-select and validate an existing KRL folder after app reinstall.
-- [ ] Restore installed versions and instances without re-downloading verified files.
 - [ ] Installable debug APK packaging.
 
 ### M2 — Version and asset pipeline
@@ -50,7 +47,6 @@ Minecraft: Java Edition still needs a compatible virtual machine to execute the 
 - [ ] Runtime discovery and compatibility checks.
 - [ ] ARM64 runtime packaging strategy.
 - [ ] Launch Minecraft in a controlled mobile process.
-- [ ] Reuse a valid locally stored authorized session for offline launch without creating or impersonating an account identity.
 - [ ] Collect crash reports and structured launch diagnostics.
 
 ### M4 — Mod and mod-loader support
@@ -75,6 +71,26 @@ Minecraft: Java Edition still needs a compatible virtual machine to execute the 
 - [ ] Evaluate runtime execution restrictions and graphics integration.
 - [ ] Confirm that a supported Java Edition runtime can operate under iOS platform rules.
 - [ ] Do not promise game launch until a real device test succeeds.
+
+## Appended user-request backlog
+
+These requests were added after the original milestones. They must stay behind all unfinished work above, and must be completed in the order shown. Any future request is appended after the last item here; it must not interrupt an earlier task.
+
+### R1 — Persistent shared KRL folder and reinstall recovery
+
+- [ ] Connect the Rust storage layout to Android Storage Access Framework.
+- [ ] Let the user choose a shared Documents directory and create the KRL folder there.
+- [ ] Store versions, libraries, assets, runtimes, instances, mods, and worlds outside app-specific storage.
+- [ ] After reinstall, let the user reselect the existing KRL folder if Android no longer grants the old URI permission.
+- [ ] Validate storage metadata and scan existing versions and instances.
+- [ ] Reuse complete files only after verifying required metadata and checksums; do not redownload valid existing files.
+- [ ] Never overwrite or delete an unrecognized folder just because it is named KRL.
+
+### R2 — Offline launch after valid account authorization
+
+- [ ] Allow previously installed game files to launch without a network connection after a valid online account sign-in.
+- [ ] Store and refresh authorized session data securely.
+- [ ] Do not fabricate an authenticated identity or represent a nickname-only profile as a licensed account.
 
 ## Release gate
 
