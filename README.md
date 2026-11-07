@@ -4,9 +4,11 @@ A Rust-only mobile launcher project for Minecraft: Java Edition. KRL is focused 
 
 ## Project status
 
-KRL is at the foundation stage. The repository contains a Rust workspace, profile validation, version-manifest parsing and channel filtering, safe JAR import and inspection, runtime-plan validation, frame-time metrics, a filesystem storage-layout crate, and an Android native entry point.
+KRL is at the foundation stage. The repository contains a Rust workspace, profile validation, version-manifest parsing and channel filtering, safe JAR import and inspection, runtime-plan validation, frame-time metrics, a filesystem storage-layout crate, and an Android-native Rust UI shell.
 
-The storage crate defines the shared KRL directory, a versioned storage marker, shared game-data directories, and isolated per-instance directories. The Android Storage Access Framework adapter, automatic version indexing, verified reuse of existing downloads, installable APK, Microsoft sign-in, runtime packaging, mod-loader installation, and a real game launch are not implemented yet.
+The Android UI currently provides navigation for Play, Versions, Mods, Accounts, and Settings. Actions that depend on unfinished account, download, runtime, or storage integrations remain disabled and are identified as unfinished. This is an interface shell, not a complete launcher.
+
+The storage crate defines the shared KRL directory, a versioned storage marker, shared game-data directories, and isolated per-instance directories. The Android Storage Access Framework adapter, automatic version indexing, verified reuse of existing downloads, installable APK packaging, Microsoft sign-in, runtime packaging, mod-loader installation, and a real game launch are not implemented yet.
 
 ## Platform scope
 
@@ -16,21 +18,19 @@ The storage crate defines the shared KRL directory, a versioned storage marker, 
 
 ## Rust-only source policy
 
-All KRL application and launcher logic is written in Rust. Do not add Java, Kotlin, Swift, or Objective-C application source files. Android currently uses the built-in NativeActivity entry point through the Rust android-activity crate.
+All KRL application and launcher logic is written in Rust. Do not add Java, Kotlin, Swift, or Objective-C application source files. Android uses the built-in NativeActivity entry point through the Rust android-activity crate and the Rust eframe UI.
 
 Minecraft: Java Edition itself consists of Java bytecode and requires a compatible virtual machine to run. KRL will integrate with that external runtime from Rust; this does not make the launcher source code Java-based. The runtime is a game execution requirement, not a launcher implementation language.
-
-The Android NativeActivity route has limited integration with the system soft keyboard. The mobile UI and sign-in input flow must be designed around the Rust-only constraint rather than silently adding platform-language source.
 
 ## Workspace
 
 - krl-core: shared profile and loader models.
-- krl-versions: official version-manifest parsing and channel filtering.
+- krl-versions: official version manifest parsing and channel filtering.
 - krl-mods: JAR import, archive inspection, duplicate detection, listing, and removal.
 - krl-runtime: runtime compatibility checks and launch-plan validation.
 - krl-bench: average FPS, 1% low, and frame-time calculations.
 - krl-storage: persistent shared-directory layout, storage marker, instance paths, and path validation.
-- krl-android: Rust NativeActivity entry point.
+- krl-android: Android NativeActivity entry point and Rust UI shell.
 
 ## Persistent KRL folder
 
@@ -48,7 +48,7 @@ GitHub Actions runs Rust checks and an Android ARM64 compile check. A successful
 
 ## Account modes
 
-KRL is planned to support Microsoft sign-in and offline play after a successful account sign-in. The launcher should securely preserve the authorized local session and allow previously installed game versions to start without a network connection when the session and required files remain valid. Offline play must never fabricate an authenticated identity or bypass account ownership checks. The Android UI, secure session persistence, and end-to-end offline launch are not implemented yet.
+KRL is planned to support Microsoft sign-in and offline play after a successful account sign-in. The launcher should securely preserve the authorized local session and allow previously installed game versions to start without a network connection when the session and required files remain valid. Offline play must never fabricate an authenticated identity or bypass account ownership checks. Microsoft sign-in, secure session persistence, and end-to-end offline launch are not implemented yet.
 
 ## Performance policy
 

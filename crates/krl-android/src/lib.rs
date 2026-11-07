@@ -1,37 +1,41 @@
 pub const APPLICATION_ID: &str = "io.kerynth.krl";
+pub const APPLICATION_NAME: &str = "Kerynth Rust Launcher";
 
 pub fn application_name() -> &'static str {
-    "Kerynth Rust Launcher"
+    APPLICATION_NAME
 }
+
+#[cfg(target_os = "android")]
+mod ui;
 
 #[cfg(target_os = "android")]
 #[unsafe(no_mangle)]
 fn android_main(app: android_activity::AndroidApp) {
-    use android_activity::{MainEvent, PollEvent};
-    use std::time::Duration;
+    let options = eframe::NativeOptions {
+        android_app: Some(app),
+        renderer: eframe::Renderer::Glow,
+        ..Default::default()
+    };
 
-    loop {
-        let mut destroyed = false;
+    let result = eframe::run_native(
+        APPLICATION_NAME,
+        options,
+        Box::new(|context| Ok(Box::new(ui::KrlApp::new(context)))),
+    );
 
-        let _ = app.poll_events(Some(Duration::from_millis(500)), |event| {
-            if matches!(event, PollEvent::Main(MainEvent::Destroy)) {
-                destroyed = true;
-            }
-        });
-
-        if destroyed {
-            break;
-        }
+    if let Err(error) = result {
+        panic!("KRL Android UI failed to start: {error}");
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{APPLICATION_ID, application_name};
+    use super::{APPLICATION_ID, APPLICATION_NAME, application_name};
 
     #[test]
     fn exposes_android_application_identity() {
         assert_eq!(APPLICATION_ID, "io.kerynth.krl");
-        assert_eq!(application_name(), "Kerynth Rust Launcher");
+        assert_eq!(APPLICATION_NAME, "Kerynth Rust Launcher");
+        assert_eq!(application_name(), APPLICATION_NAME);
     }
 }
