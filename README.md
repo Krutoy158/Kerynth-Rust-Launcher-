@@ -1,30 +1,35 @@
 # Kerynth Rust Launcher (KRL)
 
-A Rust-first launcher project focused on running Minecraft: Java Edition on mobile devices with measurable performance, reliable version management, and per-profile mod management.
+A Rust-only mobile launcher project for Minecraft: Java Edition. KRL is focused on measurable performance, reliable game-version management, and per-profile mod management.
 
 ## Project status
 
-KRL is at the foundation stage. The repository currently establishes the Rust workspace, domain models, version-manifest parsing, safe JAR mod management, runtime process preparation, performance metrics, and an Android native entry point. A complete launcher UI, Microsoft authentication, verified asset/library downloads, mod-loader installation, and game launch orchestration are not implemented yet.
+KRL is at the foundation stage. The repository currently contains a Rust workspace, profile validation, version-manifest parsing and channel filtering, safe JAR import and inspection, runtime-plan validation, frame-time metrics, and an Android native entry point.
+
+A complete launcher interface, Microsoft sign-in, verified downloads, runtime packaging, mod-loader installation, and a real game launch are not implemented yet.
+
+## Platform scope
+
+- **Android ARM64:** first implementation and validation target.
+- **iOS:** planned feasibility track; support is not claimed until a physical-device prototype proves the runtime and graphics path.
+- **Desktop:** explicitly out of scope. KRL is a phone/tablet launcher.
 
 ## Rust-only source policy
 
-All KRL application and launcher logic is written in Rust. The repository must not contain Java or Kotlin source files. Android uses the operating system's `NativeActivity` entry point and a Rust native library.
+All KRL application and launcher logic is written in Rust. Do not add Java, Kotlin, Swift, or Objective-C application source files. Android currently uses the built-in `NativeActivity` entry point through the Rust `android-activity` crate.
 
-Minecraft: Java Edition itself is Java bytecode and requires a compatible JVM at runtime. KRL will manage and invoke that external runtime from Rust; this does not make the launcher code Java-based. A JVM is a runtime requirement of the game, not an optional launcher language choice.
+Minecraft: Java Edition itself consists of Java bytecode and requires a compatible virtual machine to run. KRL will integrate with that external runtime from Rust; this does not make the launcher source code Java-based. The runtime is a game execution requirement, not a launcher implementation language.
 
-## Targets
-
-- Android ARM64 is the first implementation and validation target.
-- iOS is a separate feasibility track. Java runtime execution, JIT availability, app distribution rules, and graphics integration must be proven before promising support.
+The Android NativeActivity route has limited integration with the system soft keyboard. The mobile UI and sign-in input flow must be designed around the Rust-only constraint rather than silently adding platform-language source.
 
 ## Workspace
 
-- `krl-core`: shared launcher and profile models.
-- `krl-versions`: Mojang version manifest parsing and lookup.
-- `krl-mods`: safe import, inspection, listing, and removal of JAR mod files.
-- `krl-runtime`: JVM validation and Rust-side process specification.
-- `krl-bench`: frame-time and 1% low calculations.
-- `krl-android`: Android NativeActivity entry point implemented in Rust.
+- `krl-core`: shared profile and loader models.
+- `krl-versions`: official version-manifest parsing and channel filtering.
+- `krl-mods`: JAR import, archive inspection, duplicate detection, listing, and removal.
+- `krl-runtime`: runtime compatibility checks and launch-plan validation.
+- `krl-bench`: average FPS, 1% low, and frame-time calculations.
+- `krl-android`: Rust NativeActivity entry point.
 
 ## Build and test
 
@@ -34,11 +39,13 @@ cargo test --workspace --all-targets
 cargo clippy --workspace --all-targets -- -D warnings
 ```
 
-Android ARM64 cross-builds are checked by GitHub Actions. A successful native-library build is not the same as a complete installable APK or a successful Minecraft launch.
+GitHub Actions runs Rust checks and an Android ARM64 compile check. A successful native-library compile is not the same as a complete installable APK or a successful Minecraft launch.
 
 ## Performance policy
 
-No FPS claims are made without repeatable measurements on identified devices, game versions, renderers, settings, and mod sets. Benchmarks must include average FPS, 1% low, frame-time distribution, memory use, and thermal behavior.
+Rust alone does not make Minecraft faster. Performance depends on the game runtime, renderer, graphics drivers, version, settings, mods, device memory, and thermal state. No FPS claims will be made without repeatable physical-device benchmarks.
+
+See [docs/PERFORMANCE.md](docs/PERFORMANCE.md) and [docs/ROADMAP.md](docs/ROADMAP.md).
 
 ## Legal
 
