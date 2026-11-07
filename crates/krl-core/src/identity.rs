@@ -3,7 +3,14 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(try_from = "OfflineIdentityData")]
 pub struct OfflineIdentity {
+    username: String,
+    uuid: String,
+}
+
+#[derive(Deserialize)]
+struct OfflineIdentityData {
     username: String,
     uuid: String,
 }
@@ -12,6 +19,18 @@ pub struct OfflineIdentity {
 pub enum IdentityError {
     #[error("username must contain 3 to 16 ASCII letters, digits, or underscores")]
     InvalidUsername,
+}
+
+impl TryFrom<OfflineIdentityData> for OfflineIdentity {
+    type Error = String;
+
+    fn try_from(data: OfflineIdentityData) -> Result<Self, Self::Error> {
+        let identity = Self::new(data.username).map_err(|error| error.to_string())?;
+        if identity.uuid != data.uuid {
+            return Err("offline UUID does not match username".to_owned());
+        }
+        Ok(identity)
+    }
 }
 
 impl OfflineIdentity {
@@ -89,10 +108,14 @@ mod tests {
     }
 
     #[test]
-    fn serializes_local_identity() {
+    fn serializes_and_validates_local_identity() {
         let identity = OfflineIdentity::new("TemaPlayer").expect("valid username");
         let json = serde_json::to_string(&identity).expect("identity should serialize");
-        assert!(json.contains("TemaPlayer"));
-        assert!(json.contains(identity.uuid()));
+        let decoded: OfflineIdentity =
+            serde_json::from_str(&json).expect("identity should deserialize");
+        assert_eq!(decoded, identity);
+
+        let altered = json.replace(identity.uuid(), "00000000-0000-3000-8000-000000000000");
+        assert!(serde_json::from_str::<OfflineIdentity>(&altered).is_err());
     }
 }
