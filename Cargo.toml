@@ -6,6 +6,7 @@ members = [
     "crates/krl-mods",
     "crates/krl-runtime",
     "crates/krl-bench",
+    "crates/krl-storage",
     "crates/krl-android",
 ]
 

@@ -18,6 +18,7 @@ Minecraft: Java Edition still needs a compatible virtual machine to execute the 
 - Safe JAR import, archive inspection, duplicate detection, and removal.
 - Runtime launch-plan validation.
 - FPS and frame-time metric calculations.
+- Persistent KRL storage layout, format marker, and per-instance directories.
 - Android NativeActivity entry point.
 - CI checks and platform policy.
 
@@ -27,8 +28,10 @@ Minecraft: Java Edition still needs a compatible virtual machine to execute the 
 - Microsoft account sign-in screen and secure session storage.
 - Offline launch option for previously authenticated accounts with locally available game files.
 - Application lifecycle and persistent settings.
-- Android Storage Access Framework integration for user-selected files.
-- Internal per-profile directory layout.
+- Android Storage Access Framework folder picker and Rust document-provider adapter.
+- Create the shared KRL folder in a user-selected Documents directory.
+- Re-select and validate an existing KRL folder after app reinstall.
+- Restore installed versions and instances without re-downloading verified files.
 - Installable debug APK packaging.
 
 ### M2 — Version and asset pipeline
@@ -36,7 +39,8 @@ Minecraft: Java Edition still needs a compatible virtual machine to execute the 
 - Download and verify the official version manifest.
 - Parse per-version metadata.
 - Resolve libraries, assets, and client files.
-- Resume interrupted downloads and verify checksums.
+- Reuse shared libraries and assets across instances.
+- Resume interrupted downloads and verify checksums before reusing files.
 - Support releases, snapshots, old beta, and old alpha where metadata remains available.
 
 ### M3 — Runtime integration
@@ -49,7 +53,7 @@ Minecraft: Java Edition still needs a compatible virtual machine to execute the 
 
 ### M4 — Mod and mod-loader support
 
-- Per-profile mod directory.
+- Per-instance mod directory in shared KRL storage.
 - User-selected JAR import.
 - Compatibility metadata and conflict warnings.
 - Fabric first, then Quilt, Forge, and NeoForge after installation flows are implemented.
