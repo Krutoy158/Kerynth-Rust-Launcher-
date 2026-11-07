@@ -14,7 +14,6 @@ Minecraft: Java Edition still needs a compatible virtual machine to execute the 
 
 - Rust workspace and crate boundaries.
 - Core profile validation.
-- Offline player identity model with Minecraft-compatible deterministic UUID generation.
 - Mojang version manifest data model and channel filtering.
 - Safe JAR import, archive inspection, duplicate detection, and removal.
 - Runtime launch-plan validation.
@@ -25,8 +24,8 @@ Minecraft: Java Edition still needs a compatible virtual machine to execute the 
 ### M1 — Android application shell
 
 - Native Rust UI and touch input.
-- Account selection screen for Microsoft and Offline Account modes.
-- Offline username validation and local profile persistence.
+- Microsoft account sign-in screen and secure session storage.
+- Offline launch option for previously authenticated accounts with locally available game files.
 - Application lifecycle and persistent settings.
 - Android Storage Access Framework integration for user-selected files.
 - Internal per-profile directory layout.
@@ -45,7 +44,7 @@ Minecraft: Java Edition still needs a compatible virtual machine to execute the 
 - Runtime discovery and compatibility checks.
 - ARM64 runtime packaging strategy.
 - Launch Minecraft in a controlled mobile process.
-- Pass the selected offline identity to the game without claiming Microsoft authentication.
+- Reuse a valid locally stored authorized session for offline launch without creating or impersonating an account identity.
 - Collect crash reports and structured launch diagnostics.
 
 ### M4 — Mod and mod-loader support
